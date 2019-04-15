@@ -1,132 +1,48 @@
-<!doctype html>
-<html lang="en">
+{{define "content"}}
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Recipe Link</th>
+      <th scope="col">Contains Meat</th>
+      <th scope="col">Contains Seafood</th>
+      <th scope="col">Execution Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $sid, $recipeEntry := .sources }}
+    <tr data-toggle="collapse" data-target="#collapse-{{ $sid }}">
+      <th scope="row">{{ $recipeEntry.Recipe.RecipeLink }}</th>
+      <td scope="col" class="">{{ $recipeEntry.Recipe.ContainsMeat}}</td>
+      <td scope="col">{{ $recipeEntry.Recipe.ContainsSeafood }}</td>
+      <td scope="col">{{ $recipeEntry.RecipeExec.DateToCook }}</td>
+      <td scope="col" class="col-2">
+        <a href="#" data-target="#removeSourceModal" data-toggle="modal" role="button" class="btn btn-primary btn-sm" data-sourceid="{{ $sid }}">Remove</a>
+      </td> 
+    </tr>
+    </div>
+    {{end}}
+  </tbody>
+</table>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-    crossorigin="anonymous">
-
-  <title>Offlineonboarder-UI</title>
-</head>
-
-<body>
-  <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">Offlineonboarder</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Datasets</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/form">Upload</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              System
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#restartModal">Restart</a>
-            </div>
-          </li>
-        </ul>
-        {{ if .dirty }}
-        <div id="saveMessage">
-          <span class="navbar-text pr-2">Changes not saved </span>
-          <button class="btn btn-outline-danger" type="button" onclick="save()"><span>Save</span></button>
-          <button class="btn btn-outline-danger" type="button" onclick="undo()"><span>Undo</span></button>
-        </div>
-        {{ end }}
+<div class="modal fade" id="removeSourceModal" tabindex="-1" role="dialog" aria-labelledby="removeSourceModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title danger">Warning</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    </nav>
-  </div>
-
-  <div id="content" class="container">
-
-    {{ range $field, $msg := .messageMap }}
-    <div class="alert alert-primary alert-dismissable fade show" role="alert">
-      <code>{{ $field }}: {{ $msg }}</code>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
-    {{end}}
-
-    {{ range $field, $err := .errorMap }}
-    <div class="alert alert-danger alert-dismissable fade show" role="alert">
-      <code>{{ $field }} : {{ $err }}</code>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
-    {{end}}
-
-    {{template "content" .}}
-  </div>
-
-  <div class="modal fade" id="restartModal" tabindex="-1" role="dialog" aria-labelledby="restartModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title danger">Warning</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to restart the service?</p>
-        </div>
-        <div class="modal-footer">
-          <a href="/restart" role="button" class="btn btn-primary">Confirm</a>
-           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove <span class="font-weight-bold" id="sourceId"></span> ?</p>
+      </div>
+      <div class="modal-footer">
+        <a id="removeSource" role="button" class="btn btn-primary">Aye</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Nay</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
-
-  <script type="text/javascript">
-  function save() {
-    $.post("/save", function(data) {
-        $("#saveMessage").html('<span class="navbar-text text-success">Saved</span>')
-        $(".alert").alert("close")
-    }).fail(function(){
-        $("#saveMessage").html('<span class="navbar-text text-danger mr-2">Failed</span><button class="btn btn-danger" type="button" onclick="save()"><span>Save</span></button>')
-    })
-  }
-
-  function undo() {
-    $.post("/undo", function(data) {
-        $("#saveMessage").html('<span class="navbar-text text-success">Reverted</span>')
-        $(".alert").alert("close")
-    }).fail(function(){
-        $("#saveMessage").html('<span class="navbar-text text-danger mr-2">Failed</span><button class="btn btn-danger" type="button" onclick="undo()"><span>Save</span></button>')
-    })
-  }
-
-  $('#removeSourceModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var sid = button.data('sourceid') // Extract info from data-* attributes
-
-    var modal = $(this)
-
-    modal.find('#sourceId').text(sid)
-    modal.find('#removeSource').attr('href', '/remove?source='+sid)
-  })
-  </script>
-
-</body>
-
-</html>
+{{end}}

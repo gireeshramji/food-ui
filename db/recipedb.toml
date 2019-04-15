@@ -1,0 +1,9 @@
+[recipeEntries]
+    [recipeEntries.0]
+        [recipeEntries.0.recipe]
+            recipeLink = "abc"
+            containsMeat = true
+            containsSeaFood = true
+        [recipeEntries.0.recipeExecution]
+            dateToCook = 2019-04-20T00:00:00Z
+

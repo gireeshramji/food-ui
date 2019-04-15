@@ -9,26 +9,27 @@ import (
 
 //Recipe: Stores all metadata pertaining to a specific recipe
 type Recipe struct {
-	recipeLink      string `toml:recipeLink`
-	containsMeat    string `toml:containsMeat`
-	containsSeaFood string `toml:containsSeafood`
+	RecipeLink      string `toml:recipeLink`
+	ContainsMeat    bool   `toml:containsMeat`
+	ContainsSeaFood bool   `toml:containsSeafood`
 }
 
 //RecipeExecutions: Stores all metadata pertaining to possible executions
 type RecipeExecution struct {
-	dateToCook time.Time `toml:dateToCook`
+	DateToCook time.Time `toml:dateToCook`
 }
 
 //Recipe Entry: Stores linkage between a specific recipe and a specific recipeExecution
 type RecipeEntry struct {
-	recipe     Recipe          `toml:recipe`
-	recipeExec RecipeExecution `toml:recipeExecution`
+	Recipe     Recipe          `toml:recipe`
+	RecipeExec RecipeExecution `toml:recipeExecution`
 }
 
 type RecipeEntryDb struct {
-	recipeEntries []RecipeEntry `toml:recipeEntries`
+	RecipeEntries []RecipeEntry `toml:recipeEntries`
 }
 
+//Loads RecipeDb from toml file
 func ParseRecipeDb(config *config.Config) *RecipeEntryDb {
 	recipe := &RecipeEntryDb{}
 	toml.DecodeFile(config.StoragePath, recipe)
